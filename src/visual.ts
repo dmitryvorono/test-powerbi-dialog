@@ -35,6 +35,9 @@ import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInst
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import DataView = powerbi.DataView;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
+import DialogAction = powerbi.DialogAction;
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import { TestDialog } from './test-dialog';
 
 import { VisualSettings } from "./settings";
 export class Visual implements IVisual {
@@ -42,19 +45,25 @@ export class Visual implements IVisual {
     private updateCount: number;
     private settings: VisualSettings;
     private textNode: Text;
+    private dialogActionsButtons = [DialogAction.OK, DialogAction.Cancel];
+    private host: IVisualHost;
 
     constructor(options: VisualConstructorOptions) {
         console.log('Visual constructor', options);
         this.target = options.element;
+        this.host = options.host;
         this.updateCount = 0;
         if (document) {
-            const new_p: HTMLElement = document.createElement("p");
-            new_p.appendChild(document.createTextNode("Update count:"));
-            const new_em: HTMLElement = document.createElement("em");
-            this.textNode = document.createTextNode(this.updateCount.toString());
-            new_em.appendChild(this.textNode);
-            new_p.appendChild(new_em);
-            this.target.appendChild(new_p);
+            const button = document.createElement("BUTTON");
+            button.innerHTML = "Open Dialog, please";
+            button.onclick = () => {
+                console.log('Hello!');
+                const dialogOptions = {
+                    actionButtons: this.dialogActionsButtons,
+                };
+                this.host.openModalDialog(TestDialog.id, dialogOptions).catch(error => console.log("error:", error));
+            };
+            this.target.appendChild(button);
         }
     }
 
