@@ -17,3 +17,6 @@ export class TestDialog {
         this.target.appendChild(div);
     }
 }
+
+globalThis.dialogRegistry = globalThis.dialogRegistry || {};
+globalThis.dialogRegistry[TestDialog.id] = TestDialog;
